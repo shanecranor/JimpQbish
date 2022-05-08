@@ -1,9 +1,10 @@
-var Jimp = require('jimp');
+var Jimp = require('jimp')
+var s = require("./seed.js")
 var _ = require('lodash')
 // open a file called "profile.jpg"
 let opsOneArg = [Math.sin, Math.tan, Math.floor, Math.ceil, Math.abs, sqrt] 
 let opsTwoArg = [add, sub, div, mult, mod, pow]
-let outFile = 'out'+Date.now()+'.png'
+let outFile = 'out'+s.seed+'.png'
 
 let c = newCanvas(500,500)
 c = bist(c,20).write(outFile)
