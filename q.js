@@ -1,8 +1,8 @@
 var Jimp = require('jimp');
 var _ = require('lodash')
 // open a file called "profile.jpg"
-let opsOneArg = [Math.sin, Math.tan, Math.floor, Math.ceil] 
-let opsTwoArg = [add, sub, div, mult, mod]
+let opsOneArg = [Math.sin, Math.tan, Math.floor, Math.ceil, Math.abs, sqrt] 
+let opsTwoArg = [add, sub, div, mult, mod, pow]
 let outFile = 'out'+Date.now()+'.png'
 
 let c = newCanvas(500,500)
@@ -29,23 +29,31 @@ function bist(img, zoom){
         let green = idx + 1
         let blue = idx + 2
         let alpha = idx + 3
-        this.bitmap.data[red] = stuff[0](stuff[1](x,y))*255
-        this.bitmap.data[green] = stuff1[0](stuff1[1](x,y))*255
-        this.bitmap.data[blue] = stuff2[0](stuff2[1](x,y))*255
+        this.bitmap.data[red] = stuff(x,y)*255
+        this.bitmap.data[green] = stuff1(x,y)*255
+        this.bitmap.data[blue] = stuff2(x,y)*255
         this.bitmap.data[alpha] = 255;
         // rgba values run from 0 - 255
     });
     return img
 }
 
+function sqrt(a){return Math.sqrt(Math.abs(a))}
 function add(a,b){ return a+b }
 function sub(a,b){ return a-b }
 function mult(a,b){return a*b }
 function div(a,b){ return a/b }
 function mod(a,b){ return a%b }
+function pow(a,b){ return Math.pow(a,b)}
 //console.log(randOp())
 function randOp(){
     let f = _.sample(opsOneArg)
     let f2 = _.sample(opsTwoArg)
-    return [f,f2]
+    let amp = _.random(-5,5, true)
+    let phase = _.random(-1000,1000, true)
+    let startX = _.random(-100,100)
+    let startY = _.random(-100,100)
+    let yAmp = _.random(-2,2)
+    let xAmp = _.random(-2,2)
+    return function(x,y){return f(amp*f2(xAmp*x+startX, yAmp*y+startY)+phase)}
 }
