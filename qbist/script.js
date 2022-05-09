@@ -1,6 +1,9 @@
 // handlers for before and after image elements
 const grid = document.querySelector(".grid");
 const colorSystem = document.querySelector(".colorSystem");
+const seed = document.querySelector('#seed')
+const width = document.querySelector('#width')
+const height = document.querySelector('#height')
 // open a file called "profile.jpg"
 let opsOneArg = [Math.sin, Math.tan, Math.floor, Math.ceil, Math.abs, sqrt];
 let opsTwoArg = [add, sub, div, mult, mod, pow];
@@ -228,24 +231,28 @@ function sample(arr) {
 }
 const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
 let t = 0
-let seed = 10
+
 async function generateImages() {
   //t++
   
   for (let i = 0; i < grid.children.length; i++) {
-    Math.seedrandom(seed+i);
+    if(parseInt(seed.value)){
+      Math.seedrandom(parseInt(seed.value))
+    }else{
+      Math.seedrandom(seed.value)
+    }
     let paramsList = []
     let funcList = [];
     for(let k = 0; k < 10; k++){
       paramsList.push(makeParams())
+      paramsList[k].amp2 += i
     }
     for(let k = 0; k < 10; k++){
       funcList.push(paramsToFunc(paramsList[k]))
     }
     //document.querySelector("#equations").innerHTML = String(paramsList).replaceAll("},", "},<br>")
     let frame = grid.children[i];
-    let c = newCanvas(300, 400);
-    console.log (colorSystem.value)
+    let c = newCanvas(width.value, height.value);
     switch(colorSystem.value){
       case "RGB":
         c = bistRGB(c, 20, funcList)
