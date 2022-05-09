@@ -11,18 +11,18 @@ function newCanvas(x, y) {
   });
   return out;
 }
-function bistYUV(img, zoom, rops) {
+function bistYUV(img, zoom, funcList) {
   let stuff0 = function (x, y) {
-    return rops[5](rops[0](x, y), rops[1](x, y));
+    return funcList[5](funcList[0](x, y), funcList[1](x, y));
   };
   let stuff1 = function (x, y) {
-    return rops[6](rops[2](x, y), rops[3](x, y));
+    return funcList[6](funcList[2](x, y), funcList[3](x, y));
   };
   let stuff2 = function (x, y) {
-    return rops[7](rops[1](x, y), rops[2](x, y));
+    return funcList[7](funcList[1](x, y), funcList[2](x, y));
   };
   let stuff3 = function (x, y) {
-    return rops[8](rops[3](x, y), rops[4](x, y));
+    return funcList[8](funcList[3](x, y), funcList[4](x, y));
   };
   img.scan(0, 0, img.bitmap.width, img.bitmap.height, function (x, y, idx) {
     x = (x / img.bitmap.width) * zoom;
@@ -43,18 +43,18 @@ function bistYUV(img, zoom, rops) {
   });
   return img;
 }
-function bistCYMK(img, zoom, rops) {
+function bistCYMK(img, zoom, funcList) {
   let stuff0 = function (x, y) {
-    return rops[5](rops[0](x, y), rops[1](x, y));
+    return funcList[5](funcList[0](x, y), funcList[1](x, y));
   };
   let stuff1 = function (x, y) {
-    return rops[6](rops[2](x, y), rops[3](x, y));
+    return funcList[6](funcList[2](x, y), funcList[3](x, y));
   };
   let stuff2 = function (x, y) {
-    return rops[7](rops[1](x, y), rops[2](x, y));
+    return funcList[7](funcList[1](x, y), funcList[2](x, y));
   };
   let stuff3 = function (x, y) {
-    return rops[8](rops[3](x, y), rops[4](x, y));
+    return funcList[8](funcList[3](x, y), funcList[4](x, y));
   };
   img.scan(0, 0, img.bitmap.width, img.bitmap.height, function (x, y, idx) {
     x = (x / img.bitmap.width) * zoom;
@@ -76,18 +76,18 @@ function bistCYMK(img, zoom, rops) {
   return img;
 }
 
-function bistRGB(img, zoom, rops) {
+function bistRGB(img, zoom, funcList) {
   let stuff0 = function (x, y) {
-    return rops[5](rops[0](x, y), rops[1](x, y));
+    return funcList[5](funcList[0](x, y), funcList[1](x, y));
   };
   let stuff1 = function (x, y) {
-    return rops[6](rops[1](x, y), rops[2](x, y));
+    return funcList[6](funcList[2](x, y), funcList[3](x, y));
   };
   let stuff2 = function (x, y) {
-    return rops[7](rops[2](x, y), rops[3](x, y));
+    return funcList[7](funcList[1](x, y), funcList[2](x, y));
   };
   let stuff3 = function (x, y) {
-    return rops[8](rops[3](x, y), rops[4](x, y));
+    return funcList[8](funcList[3](x, y), funcList[4](x, y));
   };
   img.scan(0, 0, img.bitmap.width, img.bitmap.height, function (x, y, idx) {
     x = (x / img.bitmap.width) * zoom;
@@ -196,23 +196,28 @@ function pow(a, b) {
   return Math.pow(Math.abs(a), b);
 }
 //console.log(randOp())
-function randOp() {
-  let f = sample(opsOneArg);
-  let f2 = sample(opsTwoArg);
-  let amp = randrange(-5, 5);
-  let amp2 = randrange(-5, 5);
-  let phase = randrange(-1000, 1000);
-  let startX = randrange(-100, 100);
-  let startY = randrange(-100, 100);
-  let yAmp = randrange(-2, 2);
-  let xAmp = randrange(-2, 2);
+function makeParams() {
+  let params = {
+    f: sample(opsOneArg),
+    f2: sample(opsTwoArg),
+    amp: randrange(-5, 5),
+    amp2: randrange(-5, 5),
+    phase: randrange(-1000, 1000),
+    startX: randrange(-100, 100),
+    startY: randrange(-100, 100),
+    yAmp: randrange(-2, 2),
+    xAmp: randrange(-2, 2)
+  }
+  return params  
+}
+function paramsToFunc(p){
   return function (x, y) {
-    return amp2 * f(amp * f2(xAmp * x + startX, yAmp * y + startY) + phase);
+    return p.amp2 * p.f(p.amp * p.f2(p.xAmp * x + p.startX, p.yAmp * y + p.startY) + p.phase);
   };
 }
 
-// c = bistYUV(c,10,rops).write("YUV"+outFile)
-// c = bistCYMK(c,10,rops).write("cymk"+outFile)
+// c = bistYUV(c,10,funcList).write("YUV"+outFile)
+// c = bistCYMK(c,10,funcList).write("cymk"+outFile)
 
 function randrange(a, b) {
   return Math.random() * (b - a) + a;
@@ -229,31 +234,27 @@ async function generateImages() {
   
   for (let i = 0; i < grid.children.length; i++) {
     Math.seedrandom(seed+i);
-    let rops = [
-      randOp(),
-      randOp(),
-      randOp(),
-      randOp(),
-      randOp(),
-      randOp(),
-      randOp(),
-      randOp(),
-      randOp()
-    ];
-    console.log(randOp())
-    document.querySelector("#equations").innerHTML = String(rops).replaceAll("},", "},<br>")
+    let paramsList = []
+    let funcList = [];
+    for(let k = 0; k < 10; k++){
+      paramsList.push(makeParams())
+    }
+    for(let k = 0; k < 10; k++){
+      funcList.push(paramsToFunc(paramsList[k]))
+    }
+    //document.querySelector("#equations").innerHTML = String(paramsList).replaceAll("},", "},<br>")
     let frame = grid.children[i];
     let c = newCanvas(300, 400);
     console.log (colorSystem.value)
     switch(colorSystem.value){
       case "RGB":
-        c = bistRGB(c, 20, rops)
+        c = bistRGB(c, 20, funcList)
         break
       case "YUV":
-        c = bistYUV(c, 20, rops)
+        c = bistYUV(c, 20, funcList)
         break
       case "CYMK":
-        c = bistCYMK(c, 20, rops)
+        c = bistCYMK(c, 20, funcList)
         break
     }
     c.getBase64("image/png", (err, res) => {
