@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - JIMP browser</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<label for="seed">Seed</label>
+<input id="seed" name="seed">
+<label for="width">width</label>
+<input id="width" name="width" type="number" step="1" style="width: 60px">
+<label for="height">height</label>
+<input id="height" name="height" type="number" step="1" style="width: 60px">
+<label for="alphaColor">Alpa Color</label>
+<input id="alphaColor" name="alphaColor" type="color">
+<label for="colorSystem">Color System</label>
+<select class="colorSystem" name="colorSystem" id="cars">
+  <option value="RGB">RGBa</option>
+  <option value="YUV">YUVa</option>
+  <option value="CYMK">CYMK</option>
+</select> 
+
+<button type="button" onclick="generateImages()">update</button>
+<div id="equations">test</div>
+<div class="grid">
+  <img src="">
+  <img src="">
+  <img src="">
+  <img src="">
+  <img src="">
+  <img src="">
+  <img src="">
+  <img src="">
+  <img src="">
+</div>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jimp/0.16.1/jimp.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>
